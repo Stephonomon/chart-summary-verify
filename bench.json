@@ -1,0 +1,446 @@
+{
+ "run_at": "2026-09-25 00:10",
+ "runs": 3,
+ "price_per_mtok": {
+  "jev-1.13.0": [
+   0.042,
+   0.0
+  ],
+  "claude-opus-5-5": [
+   4,
+   20
+  ],
+  "claude-sonnet-5": [
+   2,
+   10
+  ],
+  "claude-haiku-4-5": [
+   1,
+   5
+  ]
+ },
+ "arms": {
+  "jev-1.13.0": {
+   "calls": 40,
+   "latency_median_s": 2.12,
+   "latency_runs": [
+    2.04,
+    2.14,
+    2.12
+   ],
+   "input_tokens": 185735,
+   "output_tokens": 24605,
+   "cost_usd": 0.0078,
+   "scores": [
+    {
+     "caught": 6,
+     "errors": 6,
+     "false_flag_sentences": [
+      "S01"
+     ],
+     "misciting_found": true
+    },
+    {
+     "caught": 6,
+     "errors": 6,
+     "false_flag_sentences": [
+      "S01"
+     ],
+     "misciting_found": true
+    },
+    {
+     "caught": 6,
+     "errors": 6,
+     "false_flag_sentences": [
+      "S01"
+     ],
+     "misciting_found": true
+    }
+   ],
+   "stable_citation_verdicts": true,
+   "citation_verdicts_run1": {
+    "C01": "ambiguous",
+    "C02": "not_found",
+    "C03": "supported",
+    "C04": "contradicted",
+    "C05": "supported",
+    "C06": "supported",
+    "C07": "supported",
+    "C08": "supported",
+    "C09": "not_found",
+    "C10": "contradicted",
+    "C11": "supported",
+    "C12": "supported",
+    "C13": "contradicted",
+    "C14": "supported",
+    "C15": "not_found",
+    "C16": "supported",
+    "C17": "supported",
+    "C18": "supported",
+    "C19": "contradicted",
+    "C20": "contradicted",
+    "C21": "supported"
+   },
+   "chart_verdicts_run1": {
+    "S01": "supported",
+    "S02": "not_found",
+    "S03": "supported",
+    "S04": "contradicted",
+    "S05": "supported",
+    "S06": "supported",
+    "S07": "supported",
+    "S08": "supported",
+    "S09": "contradicted",
+    "S10": "supported",
+    "S11": "supported",
+    "S12": "ambiguous",
+    "S13": "supported",
+    "S14": "supported",
+    "S15": "supported",
+    "S16": "supported",
+    "S17": "supported",
+    "S18": "contradicted",
+    "S19": "supported"
+   }
+  },
+  "jev-1.13.0 fan-out": {
+   "calls": 1,
+   "latency_median_s": 0.55,
+   "latency_runs": [
+    0.55,
+    0.51,
+    0.64
+   ],
+   "input_tokens": 17401,
+   "output_tokens": 2037,
+   "cost_usd": 0.00073,
+   "scores": [
+    {
+     "caught": 6,
+     "errors": 6,
+     "false_flag_sentences": [
+      "S01"
+     ],
+     "misciting_found": true
+    },
+    {
+     "caught": 6,
+     "errors": 6,
+     "false_flag_sentences": [
+      "S01"
+     ],
+     "misciting_found": true
+    },
+    {
+     "caught": 6,
+     "errors": 6,
+     "false_flag_sentences": [
+      "S01"
+     ],
+     "misciting_found": true
+    }
+   ],
+   "stable_citation_verdicts": true,
+   "citation_verdicts_run1": {
+    "C01": "ambiguous",
+    "C02": "not_found",
+    "C03": "supported",
+    "C04": "contradicted",
+    "C05": "supported",
+    "C06": "supported",
+    "C07": "supported",
+    "C08": "supported",
+    "C09": "contradicted",
+    "C10": "contradicted",
+    "C11": "supported",
+    "C12": "supported",
+    "C13": "contradicted",
+    "C14": "supported",
+    "C15": "not_found",
+    "C16": "supported",
+    "C17": "supported",
+    "C18": "supported",
+    "C19": "contradicted",
+    "C20": "contradicted",
+    "C21": "supported"
+   },
+   "chart_verdicts_run1": {
+    "S01": "supported",
+    "S02": "not_found",
+    "S03": "supported",
+    "S04": "contradicted",
+    "S05": "supported",
+    "S06": "supported",
+    "S07": "supported",
+    "S08": "supported",
+    "S09": "contradicted",
+    "S10": "supported",
+    "S11": "supported",
+    "S12": "ambiguous",
+    "S13": "supported",
+    "S14": "supported",
+    "S15": "supported",
+    "S16": "supported",
+    "S17": "supported",
+    "S18": "contradicted",
+    "S19": "supported"
+   }
+  },
+  "claude-opus-5-5": {
+   "calls": 1,
+   "latency_median_s": 7.57,
+   "latency_runs": [
+    7.55,
+    7.6,
+    7.57
+   ],
+   "input_tokens": 7139,
+   "output_tokens": 938,
+   "cost_usd": 0.04732,
+   "scores": [
+    {
+     "caught": 6,
+     "errors": 6,
+     "false_flag_sentences": [
+      "S05",
+      "S07",
+      "S08",
+      "S15",
+      "S16"
+     ],
+     "misciting_found": true
+    },
+    {
+     "caught": 6,
+     "errors": 6,
+     "false_flag_sentences": [
+      "S05",
+      "S15",
+      "S16"
+     ],
+     "misciting_found": true
+    },
+    {
+     "caught": 6,
+     "errors": 6,
+     "false_flag_sentences": [
+      "S05",
+      "S07",
+      "S15",
+      "S16"
+     ],
+     "misciting_found": true
+    }
+   ],
+   "stable_citation_verdicts": false,
+   "citation_verdicts_run1": {
+    "C01": "supported",
+    "C02": "not_found",
+    "C03": "supported",
+    "C04": "contradicted",
+    "C05": "ambiguous",
+    "C06": "supported",
+    "C07": "ambiguous",
+    "C08": "ambiguous",
+    "C09": "contradicted",
+    "C10": "ambiguous",
+    "C11": "supported",
+    "C12": "supported",
+    "C13": "contradicted",
+    "C14": "supported",
+    "C15": "not_found",
+    "C16": "ambiguous",
+    "C17": "ambiguous",
+    "C18": "supported",
+    "C19": "contradicted",
+    "C20": "contradicted",
+    "C21": "supported"
+   },
+   "chart_verdicts_run1": {
+    "S01": "supported",
+    "S02": "not_found",
+    "S03": "supported",
+    "S04": "contradicted",
+    "S05": "supported",
+    "S06": "supported",
+    "S07": "supported",
+    "S08": "supported",
+    "S09": "contradicted",
+    "S10": "supported",
+    "S11": "supported",
+    "S12": "contradicted",
+    "S13": "supported",
+    "S14": "supported",
+    "S15": "supported",
+    "S16": "supported",
+    "S17": "supported",
+    "S18": "contradicted",
+    "S19": "supported"
+   }
+  },
+  "claude-sonnet-5": {
+   "calls": 1,
+   "latency_median_s": 18.82,
+   "latency_runs": [
+    18.82,
+    21.03,
+    17.62
+   ],
+   "input_tokens": 7137,
+   "output_tokens": 2249,
+   "cost_usd": 0.03676,
+   "scores": [
+    {
+     "caught": 6,
+     "errors": 6,
+     "false_flag_sentences": [
+      "S15",
+      "S16"
+     ],
+     "misciting_found": true
+    },
+    {
+     "caught": 6,
+     "errors": 6,
+     "false_flag_sentences": [
+      "S15",
+      "S16"
+     ],
+     "misciting_found": true
+    },
+    {
+     "caught": 6,
+     "errors": 6,
+     "false_flag_sentences": [
+      "S16"
+     ],
+     "misciting_found": true
+    }
+   ],
+   "stable_citation_verdicts": false,
+   "citation_verdicts_run1": {
+    "C01": "supported",
+    "C02": "not_found",
+    "C03": "supported",
+    "C04": "contradicted",
+    "C05": "supported",
+    "C06": "supported",
+    "C07": "supported",
+    "C08": "supported",
+    "C09": "contradicted",
+    "C10": "supported",
+    "C11": "supported",
+    "C12": "supported",
+    "C13": "contradicted",
+    "C14": "supported",
+    "C15": "not_found",
+    "C16": "ambiguous",
+    "C17": "not_found",
+    "C18": "supported",
+    "C19": "contradicted",
+    "C20": "contradicted",
+    "C21": "supported"
+   },
+   "chart_verdicts_run1": {
+    "S01": "supported",
+    "S02": "not_found",
+    "S03": "supported",
+    "S04": "contradicted",
+    "S05": "supported",
+    "S06": "supported",
+    "S07": "supported",
+    "S08": "supported",
+    "S09": "contradicted",
+    "S10": "supported",
+    "S11": "supported",
+    "S12": "contradicted",
+    "S13": "supported",
+    "S14": "supported",
+    "S15": "supported",
+    "S16": "supported",
+    "S17": "supported",
+    "S18": "contradicted",
+    "S19": "supported"
+   }
+  },
+  "claude-haiku-4-5": {
+   "calls": 1,
+   "latency_median_s": 3.84,
+   "latency_runs": [
+    4.2,
+    3.69,
+    3.84
+   ],
+   "input_tokens": 5593,
+   "output_tokens": 752,
+   "cost_usd": 0.00935,
+   "scores": [
+    {
+     "caught": 5,
+     "errors": 6,
+     "false_flag_sentences": [],
+     "misciting_found": true
+    },
+    {
+     "caught": 5,
+     "errors": 6,
+     "false_flag_sentences": [],
+     "misciting_found": false
+    },
+    {
+     "caught": 5,
+     "errors": 6,
+     "false_flag_sentences": [
+      "S16"
+     ],
+     "misciting_found": false
+    }
+   ],
+   "stable_citation_verdicts": false,
+   "citation_verdicts_run1": {
+    "C01": "supported",
+    "C02": "not_found",
+    "C03": "supported",
+    "C04": "contradicted",
+    "C05": "supported",
+    "C06": "supported",
+    "C07": "supported",
+    "C08": "supported",
+    "C09": "contradicted",
+    "C10": "supported",
+    "C11": "supported",
+    "C12": "supported",
+    "C13": "supported",
+    "C14": "supported",
+    "C15": "not_found",
+    "C16": "supported",
+    "C17": "supported",
+    "C18": "supported",
+    "C19": "contradicted",
+    "C20": "supported",
+    "C21": "supported"
+   },
+   "chart_verdicts_run1": {
+    "S01": "supported",
+    "S02": "not_found",
+    "S03": "supported",
+    "S04": "contradicted",
+    "S05": "supported",
+    "S06": "supported",
+    "S07": "supported",
+    "S08": "supported",
+    "S09": "contradicted",
+    "S10": "supported",
+    "S11": "supported",
+    "S12": "supported",
+    "S13": "supported",
+    "S14": "supported",
+    "S15": "supported",
+    "S16": "supported",
+    "S17": "supported",
+    "S18": "contradicted",
+    "S19": "supported"
+   }
+  }
+ }
+}
