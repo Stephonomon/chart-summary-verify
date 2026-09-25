@@ -118,12 +118,7 @@ body.adv .segid{display:inline}
 .switch input:checked+.trk::after{transform:translateX(12px)}
 .switch input:focus-visible+.trk{outline:2px solid var(--accent);outline-offset:2px}
 .sidebody{flex:1;min-height:0;overflow-y:auto;padding:12px 16px 24px}
-.status{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);margin-bottom:10px}
-.status .dots{display:inline-flex;gap:3px}
-.status .dots i{width:8px;height:8px;border-radius:50%}
-.status .sp{flex:1}
-.status button{color:var(--accent);font-weight:600}
-.summary p{margin:0 0 12px;font-size:14.5px;line-height:1.62;max-width:62ch}
+.summary p{margin:0 0 12px;font-size:14.5px;line-height:1.62}
 .sent{border-radius:2px;transition:background .15s}
 .sent.hover{background:#E4DFF6}
 body.hl .sent.w-contradicted{background:var(--con-bg)}
@@ -250,7 +245,6 @@ body.adv .advbox{display:grid}
         <label class="switch" for="advToggle"><input type="checkbox" id="advToggle"><span class="trk"></span>Advanced</label>
       </div>
       <div class="sidebody">
-        <div class="status" id="status"></div>
         <div class="adv-panel" id="advPanel"></div>
         <div class="summary" id="summary"></div>
       </div>
@@ -273,8 +267,8 @@ const CITES_BY_SENT = {}; D.citations.forEach(c => (CITES_BY_SENT[c.sentence] ||
 const LABEL = {supported: "Supported", review: "Supported, low confidence", ambiguous: "Partly supported", not_found: "Not in cited source", contradicted: "Contradicts source"};
 const SHORT = {supported: "Supported", review: "Low confidence", ambiguous: "Partial", not_found: "Not in source", contradicted: "Contradicts"};
 const WHY = {
-  supported: "Jev found this sentence in the cited source.",
-  review: "Jev leans supported but below your confidence threshold. Take a look.",
+  supported: "The cited source supports this sentence.",
+  review: "Likely supported, but below your confidence threshold. Take a look.",
   ambiguous: "The source covers part of this sentence. Some of it came from elsewhere or goes further than the source.",
   not_found: "The cited source doesn't say this. It may come from another document, or from nowhere.",
   contradicted: "The cited source says something different. Review before relying on this sentence."};
@@ -328,7 +322,7 @@ function openDoc(id, from) {
     const secs = []; s.segments.forEach(g => { const last = secs[secs.length - 1]; if (last && last[0] === g.section) last[1].push(g); else secs.push([g.section, [g]]); });
     body = secs.map(([h, gs]) => `<h5>${esc(h)}</h5><p>${gs.map(g => `<span class="seg${cls(g)}" id="seg-${g.id}"><span class="segid">${g.id}</span>${esc(g.text)}</span>`).join(" ")}</p>`).join("");
   }
-  const banner = from ? `<div class="opened"><span>Opened from summary citation <b>${from.n}</b> · ${LABEL[status(from)]}</span><span class="sp"></span><span class="segkey" style="margin:0"><span><i style="background:var(--hl)"></i>Cited passage</span>${jevp && !cited.has(jevp) ? `<span><i style="outline:2px dashed var(--ai);outline-offset:-2px"></i>Jev's evidence</span>` : ""}</span><button type="button" data-clear>Clear</button></div>` : "";
+  const banner = from ? `<div class="opened"><span>Opened from summary citation <b>${from.n}</b> · ${LABEL[status(from)]}</span><span class="sp"></span><span class="segkey" style="margin:0"><span><i style="background:var(--hl)"></i>Cited passage</span>${jevp && !cited.has(jevp) ? `<span><i style="outline:2px dashed var(--ai);outline-offset:-2px"></i>Best evidence</span>` : ""}</span><button type="button" data-clear>Clear</button></div>` : "";
   $("#report").innerHTML = `${banner}<article class="doc"><div class="dh"><div class="kind">${esc(s.kind)} · ${esc(s.dept)}</div><h4>${esc(s.title)}</h4><div class="by">${s.date} · ${esc(s.author)}</div></div>${body}</article>`;
   const target = from && (document.getElementById("seg-" + from.passages[0]) || (jevp && document.getElementById("seg-" + jevp)));
   if (target) target.scrollIntoView({block: "center", behavior: "smooth"}); else $("#report").scrollTop = 0;
@@ -344,13 +338,6 @@ function renderSummary() {
     return `<span class="sent w-${w}${dim}" data-s="${s.id}">${esc(s.text)}${cs.map(c => `<sup class="c"><button type="button" class="cite ${status(c)}${st.open === c.n ? " open" : ""}" data-c="${c.n}" aria-label="Citation ${c.n}: ${esc(SRC[c.doc].title)}, ${LABEL[status(c)]}">${c.n}</button></sup>`).join("")}${ch.verdict !== (w === "review" ? "supported" : w) ? `<span class="chartchip ${ch.verdict}" title="Whole-chart check: ${SHORT[ch.verdict]} (${pct(ch.confidence)})">chart ${SHORT[ch.verdict].toLowerCase()}</span>` : ""}${s.seed !== "supported" || s.origin !== "claude" ? `<span class="planted" title="${esc(s.kind)}${s.claude_text ? " — Claude originally wrote: " + esc(s.claude_text) : ""}">${s.origin === "inserted" && s.seed === "supported" ? "added" : "planted"}</span>` : ""}</span>`;
   }).join(" ")}</p>`).join("");
 }
-function renderStatus() {
-  const flagged = D.citations.filter(c => status(c) !== "supported");
-  $("#status").innerHTML = flagged.length
-    ? `<span class="dots">${flagged.map(c => `<i style="background:${COLOR[status(c)]}"></i>`).join("")}</span><span>${flagged.length} of ${D.citations.length} citations need a look</span><span class="sp"></span><button type="button" id="nextFlag">Next ›</button>`
-    : `<span>All ${D.citations.length} citations supported</span>`;
-  const nb = $("#nextFlag"); if (nb) nb.onclick = () => { const i = flagged.findIndex(c => c.n > (st.open || 0)); showPop((flagged[i] || flagged[0]).n); };
-}
 function renderAdv() {
   const counts = {}; D.citations.forEach(c => counts[status(c)] = (counts[status(c)] || 0) + 1);
   const tin = D.input_tokens, calls = D.calls;
@@ -362,7 +349,7 @@ function renderAdv() {
   <div class="runstats">Summary: <b>${esc(D.summary.model)}</b>, ${SENTS.length} sentences, ${D.citations.length} citations, ${D.summary.latency_s} s.<br>
   Checks: <b>${esc(D.jev_model)}</b>, ${calls} calls (${D.citations.length} per citation + ${D.chart.length} whole-chart), ${D.wall_s} s wall, ${(tin / 1000).toFixed(0)}k input tokens. Run ${esc(D.run_at)}.</div>`;
   $("#advPanel .legend").onclick = e => { const b = e.target.closest("button[data-f]"); if (!b) return; st.filter = st.filter === b.dataset.f ? null : b.dataset.f; renderAdv(); renderSummary(); };
-  $("#thr").oninput = e => { st.thr = +e.target.value; e.target.nextElementSibling.textContent = st.thr.toFixed(2); renderStatus(); renderSummary(); };
+  $("#thr").oninput = e => { st.thr = +e.target.value; e.target.nextElementSibling.textContent = st.thr.toFixed(2); renderSummary(); };
   $("#thr").onchange = () => renderAdv();
   for (const [id, cls] of [["optHl", "hl"], ["optChart", "chartck"], ["optKey", "key"]])
     $("#" + id).onchange = e => { document.body.classList.toggle(cls, e.target.checked); store(cls, e.target.checked ? "1" : "0"); };
@@ -375,15 +362,15 @@ function showPop(n) {
   st.open = n; renderSummary();
   const quotes = c.passages.map(pid => `<div class="quote"><small>${pid} · ${esc(SEG[pid].section)}</small>${esc(SEG[pid].text)}</div>`).join("");
   const jq = c.jev_passage !== "none" && !c.passages.includes(c.jev_passage) && k !== "supported"
-    ? `<div class="quote jevq"><small>Jev's evidence · ${c.jev_passage} · ${pct(c.jev_passage_conf)}</small>${esc(SEG[c.jev_passage].text)}</div>` : "";
+    ? `<div class="quote jevq"><small>Best evidence · ${c.jev_passage} · ${pct(c.jev_passage_conf)}</small>${esc(SEG[c.jev_passage].text)}</div>` : "";
   const bars = ["supported", "ambiguous", "not_found", "contradicted"].map(v => `<span class="l">${SHORT[v]}</span><span class="b"><i style="width:${c.probs[v] * 100}%;background:${COLOR[v]}"></i></span><span class="p">${pct(c.probs[v])}</span>`).join("");
   const best = ch.best !== "none" ? SEG[ch.best] : null;
   const better = best && best.doc !== c.doc ? `<div class="row"><span class="k">Better source</span><button type="button" data-open="${best.doc}">${esc(SRC[best.doc].title)}, ${SRC[best.doc].date}</button> <span>(${ch.best}, ${pct(ch.best_conf)})</span></div>` : "";
   pop.innerHTML = `<div class="ph"><span class="tag">${KIND[s.kind][0]}</span><div><div class="pt1">${esc(s.title)}</div><div class="pt2">${s.date} · ${esc(s.author)}</div></div><button type="button" class="x" aria-label="Close">×</button></div>
-  <div class="vline"><span class="vpill ${k}">${LABEL[k]}</span><span class="conf">Jev ${pct(c.confidence)}</span></div>
+  <div class="vline"><span class="vpill ${k}">${LABEL[k]}</span><span class="conf">Confidence ${pct(c.confidence)}</span></div>
   <div class="why">${WHY[k]}</div>
   ${quotes}${jq}
-  <div class="bars" aria-label="Jev probabilities">${bars}</div>
+  <div class="bars" aria-label="Verdict probabilities">${bars}</div>
   <div class="advbox">
     <div class="row"><span class="k">Whole chart</span><span class="vpill ${ch.verdict}" style="font-size:11px;padding:0 6px">${SHORT[ch.verdict]}</span><span>${pct(ch.confidence)}</span></div>
     ${better}
@@ -415,7 +402,7 @@ $("#summary").onclick = e => {
 };
 $("#summary").onmouseover = e => { const b = e.target.closest(".cite"); document.querySelectorAll(".sent.hover").forEach(x => x.classList.remove("hover")); if (b) b.closest(".sent").classList.add("hover"); };
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !pop.hidden) closePop(); });
-document.addEventListener("mousedown", e => { if (!pop.hidden && !pop.contains(e.target) && !e.target.closest(".cite") && !e.target.closest("#nextFlag")) closePop(); });
+document.addEventListener("mousedown", e => { if (!pop.hidden && !pop.contains(e.target) && !e.target.closest(".cite")) closePop(); });
 addEventListener("resize", () => { if (!pop.hidden && st.open) place(document.querySelector(`.cite[data-c="${st.open}"]`)); });
 $(".sidebody").addEventListener("scroll", () => { if (!pop.hidden && st.open) place(document.querySelector(`.cite[data-c="${st.open}"]`)); });
 
@@ -454,10 +441,10 @@ drag($("#hsplit"), "y", setList, "listH");
 { const w = store("sideW"), h = store("listH"); if (w) root.style.setProperty("--sideW", w); if (h) root.style.setProperty("--listH", h); }
 
 /* ---------- init ---------- */
-$("#gen").textContent = `Generated ${D.today} · checked by Jev`;
+$("#gen").textContent = `Generated ${D.today}`;
 $("#advToggle").onchange = e => { st.adv = e.target.checked; document.body.classList.toggle("adv", st.adv); store("adv", st.adv ? "1" : "0"); if (!pop.hidden && st.open) showPop(st.open); };
 if (store("adv") === "1") { $("#advToggle").checked = true; st.adv = true; document.body.classList.add("adv"); }
 for (const k of ["hl", "chartck", "key"]) if (store(k) === "1") document.body.classList.add(k);
 if (location.hash === "#advanced") { $("#advToggle").checked = true; document.body.classList.add("adv", "chartck", "key"); }
-renderActs(); renderList(); openDoc(st.doc); renderStatus(); renderAdv(); renderSummary();
+renderActs(); renderList(); openDoc(st.doc); renderAdv(); renderSummary();
 </script>
