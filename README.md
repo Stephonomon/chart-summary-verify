@@ -4,6 +4,12 @@
 
 **Live demo:** https://stephonomon.github.io/chart-summary-verify/
 
+**Video walkthrough:** https://youtu.be/X0LpRQ8ikiA
+
+[![Watch the walkthrough on YouTube: reviewing an AI chart summary with verified citations](docs/video-thumb.png)](https://youtu.be/X0LpRQ8ikiA)
+
+▶ [Watch Stephon walk through the workflow on YouTube](https://youtu.be/X0LpRQ8ikiA)
+
 ![A Claude-written chart summary in an EHR sidebar. Each sentence has a colored citation; the popover shows that the "returned to the ED with a fever" sentence is not in its cited source](docs/preview.png)
 
 > **This is a design concept.** It is not a product, and it is not affiliated with any EHR or AI vendor.
@@ -38,7 +44,7 @@ This mock-up adds two things:
 
 ## Try it
 
-1. Open the [live demo](https://stephonomon.github.io/chart-summary-verify/). The summary is in the lavender sidebar on the right.
+1. Open the [live demo](https://stephonomon.github.io/chart-summary-verify/) (or [watch the walkthrough](https://youtu.be/X0LpRQ8ikiA) first). The summary is in the lavender sidebar on the right.
 2. **Click a colored number** (try the purple ⁹ and red ¹⁰ in the second paragraph). A preview opens next to it with the
    cited passage, the verdict, a confidence, and the probability for each answer.
 3. **Click the same number again.** The full source opens in Chart Review with the cited passage highlighted.
