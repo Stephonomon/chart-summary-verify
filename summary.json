@@ -1,0 +1,247 @@
+{
+ "model": "claude-opus-5-5",
+ "usage": {
+  "input": 6234,
+  "output": 1302
+ },
+ "latency_s": 12.5,
+ "paragraphs": [
+  [
+   {
+    "text": "Avery Delgado is a 15-year-old female followed by child and adolescent psychiatry for recurrent major depressive disorder (moderate), generalized anxiety disorder, and combined-type ADHD diagnosed at age 9.",
+    "cites": [
+     "P1.1",
+     "P1.3"
+    ],
+    "seed": "supported",
+    "kind": "",
+    "origin": "claude",
+    "id": "S01"
+   },
+   {
+    "text": "She had an inpatient psychiatric admission for suicidal ideation in December 2025.",
+    "cites": [
+     "P1.1"
+    ],
+    "seed": "not_found",
+    "kind": "Fabrication (no admission anywhere in the chart)",
+    "origin": "inserted",
+    "id": "S02"
+   },
+   {
+    "text": "Her problem list also includes generalized anxiety disorder and a history of nonsuicidal self-injury, with the last episode in February 2026.",
+    "cites": [
+     "P1.2",
+     "P1.4"
+    ],
+    "seed": "supported",
+    "kind": "",
+    "origin": "claude",
+    "id": "S03"
+   },
+   {
+    "text": "Family history is notable for bipolar I disorder in her father, with no known family history of suicide.",
+    "cites": [
+     "N1.11",
+     "N1.12"
+    ],
+    "seed": "contradicted",
+    "kind": "Misattribution (the aunt's diagnosis given to the father)",
+    "origin": "edited",
+    "claude_text": "Family history is notable for a maternal aunt with bipolar I disorder and a father with ADHD, with no known family history of suicide.",
+    "claude_cites": [
+     "N1.11",
+     "N1.12"
+    ],
+    "id": "S04"
+   }
+  ],
+  [
+   {
+    "text": "In June 2026 her depression was moderately severe with partial response to sertraline (PHQ-A 16, GAD-7 13), so sertraline was increased from 50 mg to 75 mg daily.",
+    "cites": [
+     "N1.7",
+     "N1.14"
+    ],
+    "seed": "supported",
+    "kind": "",
+    "origin": "claude",
+    "id": "S05"
+   },
+   {
+    "text": "Two weeks later she had slightly better mornings but persistent evening irritability, rapid mood shifts, and explosive arguments at home without physical aggression.",
+    "cites": [
+     "N2.1",
+     "N2.2"
+    ],
+    "seed": "supported",
+    "kind": "",
+    "origin": "claude",
+    "id": "S06"
+   },
+   {
+    "text": "Given persistent mood lability and the family history of bipolar disorder, off-label adjunctive lamotrigine 25 mg daily was started on 06/24/2026 with rash counseling.",
+    "cites": [
+     "N2.5",
+     "N2.7"
+    ],
+    "seed": "supported",
+    "kind": "",
+    "origin": "claude",
+    "id": "S07"
+   },
+   {
+    "text": "On day 15 of lamotrigine she presented to the ED with a pruritic maculopapular rash on the chest, back, and upper arms, diagnosed as a benign morbilliform drug eruption without features of Stevens-Johnson syndrome or DRESS.",
+    "cites": [
+     "N3.2",
+     "N3.9"
+    ],
+    "seed": "supported",
+    "kind": "",
+    "origin": "claude",
+    "id": "S08"
+   },
+   {
+    "text": "Two days later she returned to the ED with a fever and a rapidly spreading rash, and lamotrigine was permanently discontinued and added to her allergy list.",
+    "cites": [
+     "N3.15",
+     "N4.3"
+    ],
+    "seed": "contradicted",
+    "kind": "Confabulation (a return precaution turned into an event)",
+    "origin": "edited",
+    "claude_text": "Lamotrigine was stopped, the rash resolved without fever, blistering, or mouth sores, and it was permanently discontinued and added to her allergy list with no plan to rechallenge.",
+    "claude_cites": [
+     "N4.2",
+     "N4.3"
+    ],
+    "id": "S09"
+   }
+  ],
+  [
+   {
+    "text": "At her 09/16/2026 visit, mood was improved with fewer home arguments, and she has attended full days of 10th grade without absences.",
+    "cites": [
+     "N6.1",
+     "N6.2"
+    ],
+    "seed": "supported",
+    "kind": "",
+    "origin": "claude",
+    "id": "S10"
+   },
+   {
+    "text": "PHQ-A improved to 9 (mild) from 16 in June, and GAD-7 improved to 8 (mild).",
+    "cites": [
+     "N6.7"
+    ],
+    "seed": "supported",
+    "kind": "",
+    "origin": "claude",
+    "id": "S11"
+   },
+   {
+    "text": "Her suicidal ideation has resolved, and she denies self-harm since February.",
+    "cites": [
+     "N6.3",
+     "N6.4"
+    ],
+    "seed": "contradicted",
+    "kind": "Overstatement (passive SI a couple of times this month)",
+    "origin": "edited",
+    "claude_text": "She reports fleeting passive suicidal ideation a couple of times in the past month without plan or intent and denies self-harm since February.",
+    "claude_cites": [
+     "N6.3",
+     "N6.4"
+    ],
+    "id": "S12"
+   },
+   {
+    "text": "In August therapy she resisted a strong urge to self-harm after a peer conflict by using the TIPP skill, and her safety plan was reviewed.",
+    "cites": [
+     "N5.2",
+     "N5.6"
+    ],
+    "seed": "supported",
+    "kind": "",
+    "origin": "claude",
+    "id": "S13"
+   },
+   {
+    "text": "Her mother has confirmed there are no firearms in the home and that medications are kept in a locked box.",
+    "cites": [
+     "N5.6"
+    ],
+    "seed": "not_found",
+    "kind": "Mis-citation (true, but the therapy note doesn't say it; N1.9 does)",
+    "origin": "edited",
+    "claude_text": "Her mother has confirmed there are no firearms in the home and that medications are kept in a locked box.",
+    "claude_cites": [
+     "N1.9"
+    ],
+    "id": "S14"
+   }
+  ],
+  [
+   {
+    "text": "June fatigue labs showed normal TSH, free T4, and hemoglobin, but low ferritin at 11 ng/mL and low 25-OH vitamin D at 17 ng/mL.",
+    "cites": [
+     "L1.1",
+     "L1.6"
+    ],
+    "seed": "supported",
+    "kind": "",
+    "origin": "claude",
+    "id": "S15"
+   },
+   {
+    "text": "A February 2026 right-hand X-ray after she punched a wall showed no fracture, only soft-tissue swelling over the fifth knuckle.",
+    "cites": [
+     "R1.4",
+     "R1.6"
+    ],
+    "seed": "supported",
+    "kind": "Added accurate sentence (so imaging is represented)",
+    "origin": "inserted",
+    "id": "S16"
+   },
+   {
+    "text": "Ferrous sulfate 325 mg every other day and vitamin D3 2,000 IU daily were started on 09/16/2026, and weight was up 2.1 kg since June.",
+    "cites": [
+     "N6.12",
+     "N6.8"
+    ],
+    "seed": "supported",
+    "kind": "",
+    "origin": "claude",
+    "id": "S17"
+   },
+   {
+    "text": "Sertraline was increased to 100 mg daily at the September visit, and guanfacine ER 2 mg and melatonin 3 mg nightly continue.",
+    "cites": [
+     "N6.10",
+     "M1.1"
+    ],
+    "seed": "contradicted",
+    "kind": "Plan stated as done (100 mg was only to be considered)",
+    "origin": "edited",
+    "claude_text": "The plan is to continue sertraline 75 mg daily with a possible increase to 100 mg if improvement plateaus, plus guanfacine ER 2 mg and melatonin 3 mg nightly.",
+    "claude_cites": [
+     "N6.10",
+     "N6.11"
+    ],
+    "id": "S18"
+   },
+   {
+    "text": "No mood stabilizer is planned for now given her improvement, weekly therapy continues, and she returns in 4 weeks.",
+    "cites": [
+     "N6.13"
+    ],
+    "seed": "supported",
+    "kind": "",
+    "origin": "claude",
+    "id": "S19"
+   }
+  ]
+ ]
+}
