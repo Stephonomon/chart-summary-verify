@@ -30,6 +30,8 @@ button:focus-visible,[tabindex]:focus-visible,input:focus-visible{outline:2px so
 .logo i{width:18px;height:18px;border-radius:4px;background:#5FA3DC;display:grid;place-items:center;font-style:normal;font-size:11px;color:#0E2A44}
 .env{background:#F2C14E;color:#3A2A00;font-weight:700;font-size:10.5px;padding:1px 6px;border-radius:3px;letter-spacing:.06em}
 .titlebar .sp{flex:1}
+.titlebar .about{color:#BFD9F0;text-decoration:underline;text-underline-offset:2px}
+.titlebar .about:hover{color:#fff}
 .titlebar .user{opacity:.85}
 .toolbar{display:flex;gap:2px;background:#F4F7FA;border-bottom:1px solid var(--rule);padding:3px 8px;overflow-x:auto;scrollbar-width:none}
 .toolbar span{padding:3px 9px;border-radius:3px;font-size:12.5px;color:#34485B;white-space:nowrap}
@@ -218,7 +220,7 @@ body.adv .advbox{display:grid}
   .vsplit,.hsplit{display:none}
   .report{overflow:visible}
   .toolbar span:nth-child(n+4){display:none}
-  .titlebar .user{display:none}
+  .titlebar .user,.titlebar .about{display:none}
   .opts{grid-template-columns:1fr}
   .pop-arrow{display:none!important}
   .pop{left:16px!important;right:16px;width:auto;top:auto!important;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-height:70vh;overflow-y:auto}
@@ -230,7 +232,7 @@ body.adv .advbox{display:grid}
   <div class="titlebar">
     <div class="logo"><i>S</i>Sandbox EHR</div>
     <span class="env">TRAINING</span>
-    <span>Fabricated patient · demo only</span>
+    <span>Fabricated patient · design mock-up</span><a class="about" href="https://github.com/Stephonomon/chart-summary-verify" target="_blank" rel="noopener">About this mock-up ↗</a>
     <span class="sp"></span>
     <span class="user">S. Proctor, PhD · Behavioral Health</span>
   </div>

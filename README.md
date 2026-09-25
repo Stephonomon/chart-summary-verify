@@ -1,138 +1,165 @@
 # Chart Summary Verify
 
-**Can a small, non-generative model check every citation in an AI chart-review summary before a clinician relies on it?**
+**A mock-up of what AI chart summaries could look like if every citation were checked before a clinician read it.**
 
-This is a working mock-up of that idea. An Epic-style EHR shows a pediatric behavioral-health chart (progress notes,
-an ED visit, a phone call, labs, imaging, medications, problem list). The right sidebar holds a narrative **chart
-summary** written by Claude, with a superscript citation after every sentence. [Jev](https://docs.typesafe.ai) from
-TypeSafe AI checks each citation against the source it points to, and the superscript takes on the answer's color:
+**Live demo:** https://stephonomon.github.io/chart-summary-verify/
 
-| Color | Meaning |
-|---|---|
-| Green | Supported by the cited source |
-| Amber | Partly supported, or supported below the confidence threshold |
-| Purple | Not in the cited source (may be in another document, or nowhere) |
-| Red | Contradicts the cited source |
+![A Claude-written chart summary in an EHR sidebar. Each sentence has a colored citation; the popover shows that the "returned to the ED with a fever" sentence is not in its cited source](docs/preview.png)
 
-**Click a citation once** for a preview: the cited passage, Jev's verdict, and its probabilities.
-**Click it again** to open the full source in Chart Review, with the cited passage highlighted.
-Drag the bars between panes to resize the summary sidebar and the document list (double-click a bar to reset).
-**Advanced** (toggle in the sidebar header) adds a legend with counts and filters, a confidence threshold, a
-whole-chart check that tells a wrong citation from a made-up fact, the passage Jev would have cited, and the answer key
-for the planted errors.
-
-**Live demo:** https://stephonomon.github.io/chart-summary-verify/ (self-contained page with results embedded; the browser makes no API calls)
-
-![Citation preview: the fever confabulation, not found in the ED note](docs/preview.png)
-
-> Everything here is fabricated: the patient, the clinicians, the chart, and the EHR. "Sandbox EHR" is a mock-up
-> styled after the Epic look, and it is not affiliated with Epic Systems. Nothing here is medical advice or a validated clinical tool.
+> **This is a design concept.** It is not a product, and it is not affiliated with any EHR or AI vendor.
+> The patient, the clinicians, and the chart are all fabricated. "Sandbox EHR" is styled to look like a familiar
+> EHR so the idea is easy to picture in context. Nothing here is medical advice or a validated clinical tool.
 
 ---
 
-## The patient
+## The idea in one minute
 
-Avery Delgado, 15, with recurrent major depression, generalized anxiety, ADHD, and a history of nonsuicidal self-injury.
-Over the summer her psychiatrist raised sertraline and added lamotrigine for mood lability. On day 15 she came to the
-pediatric ED with a benign drug rash. She had no fever and no mucosal involvement. The ED stopped lamotrigine and sent
-her home with standard return precautions:
+AI summaries of the chart are showing up in EHRs, and the better ones already put a citation on each sentence so the
+clinician can click back to the source. That's a real step forward, but a citation only shows **where** a sentence
+came from. It doesn't show **whether the source actually says it.** To find out, the clinician has to open every
+citation and read the source. Almost nobody has time to do that for a 20-sentence summary before a visit.
+
+This mock-up adds two things:
+
+1. **A verification layer.** After the large language model writes the summary, a small **classifier model**
+   ([Jev](https://docs.typesafe.ai) from TypeSafe AI) reads each citation's source and answers one fixed question:
+   *does this source support this sentence?* Jev doesn't write text. It returns a probability for each answer, so
+   the result can be thresholded, audited, and shown as a confidence. All 40 checks on this chart ran in 2.2 seconds.
+2. **A UI that puts that answer where the clinician is already looking.** The superscript citation number itself
+   changes color. Most citations are green, so the eye goes straight to the few that aren't.
+
+| Citation | Meaning |
+|---|---|
+| 🟩 Green | The cited source supports the sentence |
+| 🟨 Amber | Partly supported, or supported with low confidence |
+| 🟪 Purple | Not in the cited source (it may be somewhere else in the chart, or nowhere) |
+| 🟥 Red | The cited source says something different |
+
+## Try it
+
+1. Open the [live demo](https://stephonomon.github.io/chart-summary-verify/). The summary is in the lavender sidebar on the right.
+2. **Click a colored number** (try the purple ⁹ and red ¹⁰ in the second paragraph). A preview opens next to it with the
+   cited passage, the verdict, a confidence, and the probability for each answer.
+3. **Click the same number again.** The full source opens in Chart Review with the cited passage highlighted.
+4. **Turn on Advanced** (top of the sidebar) for the details a clinical informaticist or a skeptical reviewer would
+   want: counts and filters, a confidence threshold, a whole-chart check, a "better source" suggestion, and the answer
+   key showing which sentences were planted errors.
+
+Drag the bars between the panes to resize the sidebar and the document list.
+
+## The example that motivated it: a return precaution that became an event
+
+The patient is Avery Delgado, a fabricated 15-year-old seen in child psychiatry for depression, anxiety, ADHD, and past
+self-harm. In July she went to the pediatric ED with a mild rash on day 15 of lamotrigine. She had no fever. The
+ED stopped the drug and sent her home with standard instructions:
 
 > *Return to the emergency department right away if she develops a fever, blisters, peeling skin, sores in the mouth or eyes, or if the rash spreads quickly.*
 
-The psychiatrist's follow-up call five days later documents that the rash was fading, with no fever at any point.
-By September she is better (PHQ-A 16 → 9), with passive suicidal ideation a couple of times a month.
+Five days later the psychiatrist's follow-up call documents that the rash was fading, with no fever at any point.
 
-## The confabulation
-
-The planted error at the center of the demo turns the return precaution into an event:
+The summary in this demo contains a planted confabulation. It is the kind of error a language model can make when
+it reads instructions as history:
 
 > *Two days later she returned to the ED with a fever and a rapidly spreading rash, and lamotrigine was permanently discontinued and added to her allergy list.* ⁹ ¹⁰
 
-It cites the discharge instructions (⁹) and the follow-up call (¹⁰). The words *fever*, *rash*, and *spreads* all
-appear in the cited passage, so a quick glance at the highlighted text can seem to confirm it. Jev reads the source
-more closely:
+The citation even looks right. The cited passage contains *fever*, *rash*, and *spreads*. A clinician skimming the
+highlighted text could easily accept it. The classifier doesn't:
 
-- ⁹ ED note: **not in cited source** (0.69; contradicted 0.26). No return visit is documented.
-- ¹⁰ Follow-up call: **contradicts source** (0.96), because "no fever, blistering, or mouth sores at any point."
-- Whole chart: **contradicted** (0.99).
+| Checked against | Verdict | Confidence |
+|---|---|---|
+| ⁹ The ED note it cites | Not in cited source | 69% |
+| ¹⁰ The follow-up call it cites | Contradicts source ("no fever… at any point") | 96% |
+| The whole chart | Contradicted | 99% |
 
-![Second click: the full follow-up call, cited passage highlighted, Jev's evidence outlined](docs/full-source.png)
+![Second click: the full follow-up call opens in Chart Review with the cited passage highlighted and the best evidence outlined](docs/full-source.png)
+
+## What it would take for real products
+
+These are the design choices the mock-up argues for:
+
+- **Check every citation, not just display it.** A citation is a claim about the source. Test it automatically.
+- **Put the result on the citation.** Color the number itself instead of adding a separate panel or report. Green
+  means the clinician can move on.
+- **Preview first, full source second.** One click shows the passage and the score. A second click opens the document in
+  context, where the clinician already knows how to read it.
+- **Tell a wrong citation from a made-up fact.** A sentence can be true but cite the wrong note. Checking against the
+  whole chart separates "cite N1.9 instead" from "nothing in the chart says this."
+  ![Advanced mode: a true sentence cited to the wrong note, with a better source suggested](docs/advanced.png)
+- **Name the known failure modes.** The classifier's definition of *contradicted* explicitly includes *turning
+  something conditional or planned in the source into something that happened*. That one rule catches both the fever
+  confabulation and a sertraline increase that was only being considered.
+- **Keep the default view quiet.** A clinician sees the summary and colored numbers. The probabilities, thresholds, and
+  audit details are one toggle away.
+- **Use a model that fits the job.** Verification is classification, not writing. A classifier returns a probability
+  for each of a fixed set of answers and runs in seconds. In an earlier [triage mock-up](https://github.com/Stephonomon/inbasket-triage)
+  it cost about 1/140th as much as a large model doing the same labeling. That makes it realistic to run on every
+  summary, every time.
+
+## Results on this chart
+
+Claude (Opus 5.5) wrote a 17-sentence summary from the chart, and it was accurate. To test the checker, five
+sentences were rewritten by hand to contain known errors and two were added, for 19 sentences and 21 citations.
+
+| Sentence | What it says | Planted error | Cited source | Whole chart |
+|---|---|---|---|---|
+| 2 | Inpatient psychiatric admission in December 2025 | Fabrication | not in source 99% | not found 95% |
+| 4 | Bipolar I disorder in her **father** | Misattribution (it's a maternal aunt) | contradicts 100% | contradicted 99% |
+| 9 | Returned to the ED with a fever and spreading rash | **Confabulation** from return precautions | not in source 69% / contradicts 96% | contradicted 99% |
+| 12 | Suicidal ideation has resolved | Overstatement (passive SI a couple of times this month) | contradicts 89% | ambiguous 72% |
+| 14 | No firearms in the home, citing the therapy note | Mis-citation (true, but note N1.9 says it) | not in source 100% | supported 100%, suggests N1.9 |
+| 18 | Sertraline increased to 100 mg | Plan stated as done | contradicts 100% / 98% | contradicted 99% |
+| 16 | Hand X-ray showed no fracture | None (accurate, added so imaging is represented) | supported 100% | supported 100% |
+
+- **All 6 planted errors were flagged.** The mis-citation was the only one the whole-chart check called supported, which is the right answer.
+- **Claude's own sentences:** 11 of 12 citations were green. One was amber: sentence 1 credits the problem list with
+  "followed by child and adolescent psychiatry," which the problem list doesn't say. That's a fair partial.
+- **Speed and size:** 40 classifier calls (21 citation checks + 19 whole-chart checks), 186k input tokens, 2.2 seconds
+  wall clock with 8 in parallel. Writing the summary took Claude 12.5 seconds.
 
 ## How it works
 
 ```
-data.py        the fabricated chart, split into passages with stable IDs (N3.15, L1.6, M1.1 ...)
-summarize.py   Claude Opus 5.5 writes the summary; each sentence cites 1-2 passage IDs (structured output) -> summary_claude.json
-seeds.py       plants known errors in Claude's frozen output -> summary.json
-verify.py      Jev checks every citation, plus every sentence against the whole chart -> results.json
-build.py       results + chart -> index.html (Pages) and artifact.html
+data.py        the fabricated chart, split into passages with stable IDs (N3.15 = ED note, passage 15)
+summarize.py   Claude writes the summary; every sentence cites 1-2 passage IDs  -> summary_claude.json
+seeds.py       plants the known errors in Claude's saved output                  -> summary.json
+verify.py      Jev checks every citation, and every sentence against the chart   -> results.json
+build.py       results + chart -> index.html, a single self-contained page
+template.html  the EHR mock-up (plain HTML/CSS/JS, no framework)
 ```
 
-For every **(sentence, cited document)** pair, Jev gets the document as its state and answers two questions:
-a Choice over *supported / contradicted / not_found / ambiguous*, and a Choice over the document's passages (which one
-is the evidence). The first question sets the superscript color. The second question drives the dashed "Jev's evidence"
-outline in the source viewer.
+Two kinds of classifier checks, each a single Jev request with typed questions:
 
-For every **sentence**, Jev also gets the whole chart (~3.5k tokens) and answers the same support question plus
-"which passage in the chart is the best evidence". This lets the page separate a *mis-citation* (true, but the cited
-document doesn't say it) from a *fabrication* (nothing in the chart says it). Advanced mode shows it as a "Better source"
-link.
+- **Citation check,** once per (sentence, cited document). The document is the context. Question 1:
+  *supported / contradicted / not found / ambiguous*. This sets the citation's color and confidence. Question 2: which
+  passage in the document is the evidence. This drives the "Best evidence" outline in the source viewer.
+- **Whole-chart check,** once per sentence. The whole chart (~3.5k tokens) is the context, with the same support
+  question plus "which passage in the chart is the best evidence." This powers the Advanced "Better source" link.
 
-The `contradicted` criterion names one error class on purpose: *the claim turns something conditional, planned, or
-hypothetical in the source (an instruction for what to do if something happens, a plan to consider a change) into
-something that actually happened.* That is the confabulation this demo is about, and the same wording catches the
-sertraline plan-stated-as-done error.
+The demo page is static. Results are computed ahead of time and embedded, so the browser makes no API calls.
 
-## Results
-
-Claude wrote 17 sentences and they were accurate. Five were then rewritten by hand to plant errors and two were
-inserted, for 19 sentences and 21 citations. Jev marked 11 of the 12 citations on Claude's untouched sentences
-supported and one partial. The page opens with "9 of 21 citations need a look": the 8 citations on planted errors plus that partial one.
-
-| Sentence | Planted sentence | Kind | Jev on cited source | Whole chart |
-|---|---|---|---|---|
-| 2 | Inpatient psychiatric admission in December 2025 | Fabrication | not in source 0.99 | not found 0.95 |
-| 4 | Bipolar I disorder in her **father** | Misattribution (it's a maternal aunt) | contradicts 1.00 | contradicted 0.99 |
-| 9 | Returned to the ED with a fever and spreading rash | **Confabulation** from return precautions | not in source 0.69 / contradicts 0.96 | contradicted 0.99 |
-| 12 | Suicidal ideation has resolved | Overstatement | contradicts 0.89 | ambiguous 0.72 |
-| 14 | No firearms in the home (cites the therapy note) | Mis-citation (true; N1.9 says it) | not in source 1.00 | supported 1.00, best N1.9 |
-| 18 | Sertraline increased to 100 mg | Plan stated as done | contradicts 1.00 / 0.98 | contradicted 0.99 |
-| 16 | Hand X-ray showed no fracture (accurate) | Added so imaging is represented | supported 1.00 | supported 1.00 |
-
-- **6 of 6 planted errors flagged**, each with at least one non-green citation. The mis-citation was the only one the
-  whole-chart check marked supported, which is the right answer.
-- **1 amber on Claude's own text:** sentence 1 cites the problem list for "followed by child and adolescent psychiatry",
-  which the problem list doesn't say (ambiguous 0.83). A reviewer would probably agree that's a partial citation.
-- The whole-chart check on #12 came back *ambiguous*, not contradicted: the August therapy note does say she denied
-  suicidal ideation *that day*. The cited September note is clear, and the citation check is the one that colors the superscript.
-- **Cost and speed:** 40 Jev calls (21 citation + 19 whole-chart), 186k input tokens, 2.2 s wall clock with 8 in parallel.
-  The summary itself took Claude 12.5 s.
-
-![Advanced mode: mis-citation, whole-chart check, better source](docs/advanced.png)
-
-## Run it
+## Run it yourself
 
 ```bash
-export ANTHROPIC_API_KEY=...          # only needed for summarize.py
-export TYPESAFE_API_KEY=...           # or put it in ~/.typesafe_api_key
 pip install anthropic
-python summarize.py   # optional: summary_claude.json is committed, and seeds.py expects its sentence order
+export ANTHROPIC_API_KEY=...      # only for summarize.py
+export TYPESAFE_API_KEY=...       # or save the key in ~/.typesafe_api_key
+python summarize.py   # optional; the committed summary_claude.json is what seeds.py expects
 python seeds.py
 python verify.py
 python build.py && open index.html
 ```
 
-## Caveats
+## Limits
 
-- One fabricated chart, seven planted errors. This is a demonstration, not an evaluation.
-- The planted errors were written by the same person who wrote the chart and the Jev criteria.
-- Jev's probabilities are shown as it returned them; no calibration was checked here.
-- A real deployment would need the full note corpus (dozens of notes, not six), which means retrieval ahead of the
-  whole-chart check, and a BAA with any vendor that sees PHI.
+- One fabricated chart with seven planted sentences. This shows the idea; it is not an evaluation.
+- The same person wrote the chart, the planted errors, and the classifier's instructions.
+- Confidences are shown as the model returned them. Calibration wasn't tested here.
+- A real chart has hundreds of documents, not ten. The whole-chart check would need retrieval first, and any vendor
+  that sees PHI would need a BAA.
 
-## Related
+## Related mock-ups
 
-- [Scribe Verify](https://github.com/Stephonomon/scribe-verify): the same idea for ambient-scribe drafts against the encounter transcript.
-- [In-basket Triage](https://github.com/Stephonomon/inbasket-triage): Jev classifying patient portal messages.
+- [Scribe Verify](https://github.com/Stephonomon/scribe-verify): the same idea for ambient-scribe notes, checked against the visit transcript.
+- [In-basket Triage](https://github.com/Stephonomon/inbasket-triage): a classifier triaging patient portal messages.
 
-Code written with Claude (Anthropic). MIT license.
+Built by Stephon Proctor, PhD, with code written by Claude (Anthropic). MIT license.
