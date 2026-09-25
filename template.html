@@ -162,6 +162,11 @@ body.adv .adv-panel{display:grid}
 /* popover */
 .pop{position:fixed;z-index:20;width:370px;max-width:calc(100vw - 32px);background:var(--surface);border:1px solid #AEBBC8;border-radius:8px;box-shadow:0 10px 30px rgba(20,40,60,.22);font-size:13px;display:grid;gap:9px;padding:12px 14px}
 .pop[hidden]{display:none}
+.pop{overflow-y:auto}
+.pop-arrow{position:fixed;z-index:21;width:12px;height:12px;background:var(--surface);border:1px solid #AEBBC8;transform:rotate(45deg);pointer-events:none}
+.pop-arrow.below{border-right:0;border-bottom:0}
+.pop-arrow.above{border-left:0;border-top:0}
+.sent.active{background:#E4DFF6;box-shadow:0 0 0 2px #E4DFF6}
 .pop .ph{display:flex;gap:8px;align-items:flex-start}
 .tag{font:600 10px var(--sans);letter-spacing:.06em;text-transform:uppercase;border-radius:3px;padding:2px 5px;background:var(--tab);color:#34485B;flex:none;margin-top:1px}
 .pop .pt1{font-weight:600;line-height:1.25}
@@ -208,6 +213,7 @@ body.adv .advbox{display:grid}
   .toolbar span:nth-child(n+4){display:none}
   .titlebar .user{display:none}
   .opts{grid-template-columns:1fr}
+  .pop-arrow{display:none!important}
   .pop{left:16px!important;right:16px;width:auto;top:auto!important;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-height:70vh;overflow-y:auto}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
@@ -253,6 +259,7 @@ body.adv .advbox{display:grid}
   </div>
 </div>
 <div class="pop" id="pop" hidden role="dialog" aria-label="Citation preview"></div>
+<div class="pop-arrow" id="popArrow" hidden></div>
 
 <script>
 const D = /*DATA*/null;
@@ -335,7 +342,8 @@ function renderSummary() {
   $("#summary").innerHTML = D.summary.paragraphs.map(p => `<p>${p.map(s => {
     const cs = CITES_BY_SENT[s.id] || [], w = worst(s.id), ch = CHART[s.id];
     const dim = st.filter && !cs.some(c => status(c) === st.filter) ? " dim" : "";
-    return `<span class="sent w-${w}${dim}" data-s="${s.id}">${esc(s.text)}${cs.map(c => `<sup class="c"><button type="button" class="cite ${status(c)}${st.open === c.n ? " open" : ""}" data-c="${c.n}" aria-label="Citation ${c.n}: ${esc(SRC[c.doc].title)}, ${LABEL[status(c)]}">${c.n}</button></sup>`).join("")}${ch.verdict !== (w === "review" ? "supported" : w) ? `<span class="chartchip ${ch.verdict}" title="Whole-chart check: ${SHORT[ch.verdict]} (${pct(ch.confidence)})">chart ${SHORT[ch.verdict].toLowerCase()}</span>` : ""}${s.seed !== "supported" || s.origin !== "claude" ? `<span class="planted" title="${esc(s.kind)}${s.claude_text ? " — Claude originally wrote: " + esc(s.claude_text) : ""}">${s.origin === "inserted" && s.seed === "supported" ? "added" : "planted"}</span>` : ""}</span>`;
+    const act = st.open && D.citations[st.open - 1].sentence === s.id ? " active" : "";
+    return `<span class="sent w-${w}${dim}${act}" data-s="${s.id}">${esc(s.text)}${cs.map(c => `<sup class="c"><button type="button" class="cite ${status(c)}${st.open === c.n ? " open" : ""}" data-c="${c.n}" aria-label="Citation ${c.n}: ${esc(SRC[c.doc].title)}, ${LABEL[status(c)]}">${c.n}</button></sup>`).join("")}${ch.verdict !== (w === "review" ? "supported" : w) ? `<span class="chartchip ${ch.verdict}" title="Whole-chart check: ${SHORT[ch.verdict]} (${pct(ch.confidence)})">chart ${SHORT[ch.verdict].toLowerCase()}</span>` : ""}${s.seed !== "supported" || s.origin !== "claude" ? `<span class="planted" title="${esc(s.kind)}${s.claude_text ? " — Claude originally wrote: " + esc(s.claude_text) : ""}">${s.origin === "inserted" && s.seed === "supported" ? "added" : "planted"}</span>` : ""}</span>`;
   }).join(" ")}</p>`).join("");
 }
 function renderAdv() {
@@ -386,14 +394,29 @@ function showPop(n) {
 }
 function place(el) {
   if (!el || innerWidth <= 760) return;
-  pop.hidden = false; const r = el.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
-  const sideL = document.querySelector(".side").getBoundingClientRect().left;
-  let left = sideL - w - 10; if (left < 12) left = Math.max(12, Math.min(innerWidth - w - 12, r.left - w / 2));
-  let top = r.top - 30; top = Math.max(12, Math.min(innerHeight - h - 12, top));
-  if (left + w > r.left && left < r.right) top = r.bottom + 8 + h < innerHeight ? r.bottom + 8 : Math.max(12, r.top - h - 8);
+  pop.hidden = false; pop.style.maxHeight = "";
+  const r = el.getBoundingClientRect(), sent = el.closest(".sent"), lines = sent.getClientRects(), first = lines[0] || r;
+  const body = $(".sidebody").getBoundingClientRect();
+  if (r.bottom < body.top || r.top > body.bottom) { closePop(); return; }   // citation scrolled out of view
+  const w = pop.offsetWidth, h = pop.offsetHeight, gap = 10, pad = 12;
+  const below = innerHeight - pad - (r.bottom + gap), above = first.top - gap - pad;   // above = clear of the whole sentence
+  let side, top;
+  if (h <= below) { side = "below"; top = r.bottom + gap; }
+  else if (h <= above) { side = "above"; top = first.top - gap - h; }
+  else if (Math.max(below, above) >= 220) {   // neither fits: take the roomier side and scroll inside the popover
+    if (below >= above) { side = "below"; top = r.bottom + gap; pop.style.maxHeight = below + "px"; }
+    else { side = "above"; pop.style.maxHeight = above + "px"; top = first.top - gap - pop.offsetHeight; }
+  } else {   // very short window: beside the sidebar
+    side = "side"; top = Math.max(pad, Math.min(innerHeight - h - pad, r.top - 40));
+  }
+  const cx = r.left + r.width / 2;
+  const left = side === "side" ? Math.max(pad, $(".side").getBoundingClientRect().left - w - gap) : Math.max(pad, Math.min(innerWidth - w - pad, cx - w / 2));
   pop.style.left = left + "px"; pop.style.top = top + "px";
+  const arrow = $("#popArrow"); arrow.hidden = side === "side"; arrow.className = "pop-arrow " + side;
+  arrow.style.left = Math.max(left + 14, Math.min(left + w - 26, cx - 6)) + "px";
+  arrow.style.top = (side === "below" ? top - 6 : top + pop.offsetHeight - 6) + "px";
 }
-function closePop() { pop.hidden = true; st.open = null; renderSummary(); }
+function closePop() { pop.hidden = true; $("#popArrow").hidden = true; st.open = null; renderSummary(); }
 function openFull(n) { const c = D.citations[n - 1]; closePop(); st.sub = "all"; act = 1; renderActs(); openDoc(c.doc, c); if (innerWidth <= 760) $("#report").scrollIntoView({behavior: "smooth"}); }
 
 $("#summary").onclick = e => {
