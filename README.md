@@ -16,6 +16,7 @@ TypeSafe AI checks each citation against the source it points to, and the supers
 
 **Click a citation once** for a preview: the cited passage, Jev's verdict, and its probabilities.
 **Click it again** to open the full source in Chart Review, with the cited passage highlighted.
+Drag the bars between panes to resize the summary sidebar and the document list (double-click a bar to reset).
 **Advanced** (toggle in the sidebar header) adds a legend with counts and filters, a confidence threshold, a
 whole-chart check that tells a wrong citation from a made-up fact, the passage Jev would have cited, and the answer key
 for the planted errors.

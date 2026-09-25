@@ -14,7 +14,7 @@
   --desk:#D9E1E8; --ground:#EEF2F6; --surface:#FFFFFF; --panel:#F6F8FA; --story:#E3EBF2; --ink:#1B2631; --muted:#5A6977; --rule:#C8D3DD; --rule2:#E1E7ED;
   --bar:#22405C; --bar2:#2E5275; --bar-ink:#E9F0F6; --tab:#DCE5EE; --accent:#2466A8; --accent-soft:#E2EDF8; --ai:#4F46A5; --ai-soft:#ECEAF8;
   --sup:#1D7A4B; --sup-bg:#E2F2E8; --amb:#9E5F00; --amb-bg:#FCEFD6; --nf:#6A4AA8; --nf-bg:#EEE8F8; --con:#BE2F28; --con-bg:#FBE3E1;
-  --hl:#FFF0A8; --allergy:#B42318;
+  --hl:#FFF0A8; --ai-bg:#F1EEFB; --ai-bg2:#E3DDF6; --ai-rule:#CFC7EC; --sideW:400px; --listH:34%; --allergy:#B42318;
   --sans:"Source Sans 3","Segoe UI",-apple-system,Helvetica,Arial,sans-serif; --serif:"Source Serif 4",Georgia,serif; --mono:"IBM Plex Mono",Menlo,Consolas,monospace;
 }
 html,body{height:100%}
@@ -40,7 +40,19 @@ button:focus-visible,[tabindex]:focus-visible,input:focus-visible{outline:2px so
 .wstab b{margin-left:10px;color:var(--muted);font-weight:400}
 
 /* body grid */
-.work{flex:1;min-height:0;display:grid;grid-template-columns:208px minmax(0,1fr) minmax(330px,400px)}
+.work{flex:1;min-height:0;display:grid;grid-template-columns:208px minmax(0,1fr) 7px var(--sideW)}
+.vsplit{cursor:col-resize;background:linear-gradient(90deg,var(--rule) 0 1px,#E4E9EE 1px 6px,var(--ai-rule) 6px);position:relative;touch-action:none}
+.vsplit::after,.hsplit::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:2px;background:#8FA0B0}
+.vsplit::after{width:3px;height:28px}
+.hsplit{height:7px;flex:none;cursor:row-resize;background:#E4E9EE;border-block:1px solid var(--rule);position:relative;touch-action:none}
+.hsplit::after{width:28px;height:3px}
+.vsplit::before{content:"";position:absolute;inset:0 -5px;z-index:5}
+.hsplit::before{content:"";position:absolute;inset:-5px 0;z-index:5}
+.vsplit:hover,.vsplit.drag,.hsplit:hover,.hsplit.drag{background:var(--accent-soft)}
+.vsplit:hover::after,.vsplit.drag::after,.hsplit:hover::after,.hsplit.drag::after{background:var(--accent)}
+body.resizing{user-select:none}
+body.resizing.col{cursor:col-resize}
+body.resizing.row{cursor:row-resize}
 .story{background:var(--story);border-right:1px solid var(--rule);overflow-y:auto;padding:12px 12px 20px;font-size:12.5px;display:flex;flex-direction:column;gap:10px}
 .pt{display:flex;gap:10px;align-items:center}
 .avatar{width:46px;height:46px;border-radius:50%;background:#B9CBDB;color:#28435D;display:grid;place-items:center;font-weight:700;font-size:16px;flex:none}
@@ -52,7 +64,7 @@ button:focus-visible,[tabindex]:focus-visible,input:focus-visible{outline:2px so
 .allergy{color:var(--allergy);font-weight:600}
 .story .bh{border-top:1px solid var(--rule);padding-top:8px}
 
-.center{min-width:0;display:flex;flex-direction:column;min-height:0;border-right:1px solid var(--rule)}
+.center{min-width:0;display:flex;flex-direction:column;min-height:0}
 .acts{display:flex;gap:0;background:var(--surface);border-bottom:1px solid var(--rule);padding:0 8px;overflow-x:auto;scrollbar-width:none}
 .acts button{padding:8px 12px;font-size:13px;color:#34485B;border-bottom:3px solid transparent;white-space:nowrap}
 .acts button[aria-selected="true"]{border-bottom-color:var(--accent);color:var(--ink);font-weight:600}
@@ -62,7 +74,7 @@ button:focus-visible,[tabindex]:focus-visible,input:focus-visible{outline:2px so
 .subtabs{display:flex;gap:4px;padding:6px 12px 0;border-bottom:1px solid var(--rule);overflow-x:auto;scrollbar-width:none}
 .subtabs button{padding:5px 11px;border:1px solid var(--rule);border-bottom:0;border-radius:4px 4px 0 0;font-size:12.5px;background:var(--panel);color:#34485B;white-space:nowrap}
 .subtabs button[aria-selected="true"]{background:var(--surface);font-weight:600;color:var(--ink);position:relative;top:1px}
-.list{max-height:34%;min-height:110px;overflow:auto;border-bottom:1px solid var(--rule)}
+.list{height:var(--listH);min-height:60px;flex:none;overflow:auto}
 table.grid{border-collapse:collapse;width:100%;font-size:12.5px}
 table.grid th{position:sticky;top:0;background:#EAF0F5;text-align:left;font-weight:600;color:#34485B;padding:4px 10px;border-bottom:1px solid var(--rule);white-space:nowrap}
 table.grid td{padding:4px 10px;border-bottom:1px solid var(--rule2);white-space:nowrap}
@@ -98,8 +110,9 @@ body.adv .segid{display:inline}
 .segkey i{display:inline-block;width:22px;height:11px;border-radius:2px}
 
 /* AI sidebar */
-.side{min-height:0;display:flex;flex-direction:column;background:var(--surface)}
-.sidehead{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--rule2)}
+.side{min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--ai-bg)}
+.sidehead{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--ai-rule);background:var(--ai-bg2)}
+.sidehead .spark{background:var(--ai);color:#fff}
 .spark{width:22px;height:22px;border-radius:6px;background:var(--ai-soft);color:var(--ai);display:grid;place-items:center;flex:none}
 .sidehead h3{margin:0;font-size:14.5px}
 .sidehead .gen{color:var(--muted);font-size:11.5px}
@@ -119,7 +132,7 @@ body.adv .segid{display:inline}
 .status button{color:var(--accent);font-weight:600}
 .summary p{margin:0 0 12px;font-size:14.5px;line-height:1.62;max-width:62ch}
 .sent{border-radius:2px;transition:background .15s}
-.sent.hover{background:#EEF3F8}
+.sent.hover{background:#E4DFF6}
 body.hl .sent.w-contradicted{background:var(--con-bg)}
 body.hl .sent.w-not_found{background:var(--nf-bg)}
 body.hl .sent.w-ambiguous,body.hl .sent.w-review{background:var(--amb-bg)}
@@ -138,12 +151,12 @@ sup.c{line-height:0}
 body.adv.chartck .chartchip{display:inline}
 .chartchip.supported{color:var(--sup);border-color:var(--sup)} .chartchip.ambiguous{color:var(--amb);border-color:var(--amb)}
 .chartchip.not_found{color:var(--nf);border-color:var(--nf)} .chartchip.contradicted{color:var(--con);border-color:var(--con)}
-.sidefoot{border-top:1px solid var(--rule2);padding:8px 16px;font-size:11.5px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sidefoot{background:var(--ai-bg2);border-top:1px solid var(--ai-rule);padding:8px 16px;font-size:11.5px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .sidefoot .sp{flex:1}
 .fb button{padding:2px 6px;border:1px solid var(--rule);border-radius:4px;background:var(--panel)}
 
 /* advanced drawer */
-.adv-panel{display:none;background:var(--panel);border:1px solid var(--rule2);border-radius:6px;padding:10px 12px;margin-bottom:12px;font-size:12.5px;gap:10px}
+.adv-panel{display:none;background:var(--surface);border:1px solid var(--ai-rule);border-radius:6px;padding:10px 12px;margin-bottom:12px;font-size:12.5px;gap:10px}
 body.adv .adv-panel{display:grid}
 .legend{display:grid;grid-template-columns:auto 1fr auto;gap:4px 8px;align-items:center}
 .legend .n{font-variant-numeric:tabular-nums;color:var(--muted);text-align:right}
@@ -190,7 +203,7 @@ body.adv .advbox{display:grid}
 .btn{border:1px solid var(--accent);color:var(--accent);border-radius:4px;padding:3px 10px;font-weight:600;font-size:12.5px;background:var(--surface)}
 .btn:hover{background:var(--accent-soft)}
 
-@media (max-width:1100px){.work{grid-template-columns:minmax(0,1fr) minmax(320px,380px)}.story{display:none}.ptstrip{display:flex!important}}
+@media (max-width:1100px){.work{grid-template-columns:minmax(0,1fr) 7px var(--sideW)}.story{display:none}.ptstrip{display:flex!important}}
 .ptstrip{display:none;gap:12px;flex-wrap:wrap;align-items:center;padding:6px 12px;background:var(--story);border-bottom:1px solid var(--rule);font-size:12.5px}
 .ptstrip b{font-size:14px}
 @media (max-width:760px){
@@ -201,7 +214,8 @@ body.adv .advbox{display:grid}
   .side{order:-1;border-bottom:1px solid var(--rule)}
   .sidebody{overflow:visible}
   .center{border-right:0}
-  .list{max-height:none}
+  .list{height:auto;max-height:none}
+  .vsplit,.hsplit{display:none}
   .report{overflow:visible}
   .toolbar span:nth-child(n+4){display:none}
   .titlebar .user{display:none}
@@ -230,9 +244,11 @@ body.adv .advbox{display:grid}
         <div class="crhead"><h3 id="crtitle">Chart Review</h3></div>
         <div class="subtabs" role="tablist" id="subtabs"></div>
         <div class="list" id="list"></div>
+        <div class="hsplit" id="hsplit" role="separator" aria-orientation="horizontal" aria-label="Resize document list" tabindex="0"></div>
         <div class="report" id="report" tabindex="-1"></div>
       </div>
     </section>
+    <div class="vsplit" id="vsplit" role="separator" aria-orientation="vertical" aria-label="Resize chart summary" tabindex="0"></div>
     <aside class="side" aria-label="AI chart summary">
       <div class="sidehead">
         <span class="spark" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9zM19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9z"/></svg></span>
@@ -409,6 +425,40 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !pop.hidde
 document.addEventListener("mousedown", e => { if (!pop.hidden && !pop.contains(e.target) && !e.target.closest(".cite") && !e.target.closest("#nextFlag")) closePop(); });
 addEventListener("resize", () => { if (!pop.hidden && st.open) place(document.querySelector(`.cite[data-c="${st.open}"]`)); });
 $(".sidebody").addEventListener("scroll", () => { if (!pop.hidden && st.open) place(document.querySelector(`.cite[data-c="${st.open}"]`)); });
+
+/* ---------- resizable panes ---------- */
+const root = document.documentElement, work = $(".work"), cr = $(".cr");
+function setSide(px) {
+  const max = work.getBoundingClientRect().width - (innerWidth > 1100 ? 208 : 0) - 7 - 360;
+  px = Math.round(Math.max(300, Math.min(max, px)));
+  root.style.setProperty("--sideW", px + "px"); $("#vsplit").setAttribute("aria-valuenow", px); return px;
+}
+function setList(px) {
+  const max = cr.getBoundingClientRect().height - 180;
+  px = Math.round(Math.max(60, Math.min(max, px)));
+  root.style.setProperty("--listH", px + "px"); $("#hsplit").setAttribute("aria-valuenow", px); return px;
+}
+function drag(handle, axis, apply, key) {
+  handle.addEventListener("pointerdown", e => {
+    e.preventDefault(); handle.setPointerCapture(e.pointerId); handle.classList.add("drag"); document.body.classList.add("resizing", axis === "x" ? "col" : "row");
+    const move = ev => {
+      const v = axis === "x" ? work.getBoundingClientRect().right - ev.clientX - 3 : ev.clientY - $("#list").getBoundingClientRect().top;
+      apply(v); if (!pop.hidden && st.open) place(document.querySelector(`.cite[data-c="${st.open}"]`));
+    };
+    const up = () => { handle.classList.remove("drag"); document.body.classList.remove("resizing", "col", "row"); handle.removeEventListener("pointermove", move); handle.removeEventListener("pointerup", up); handle.removeEventListener("pointercancel", up);
+      store(key, getComputedStyle(root).getPropertyValue(axis === "x" ? "--sideW" : "--listH").trim()); };
+    handle.addEventListener("pointermove", move); handle.addEventListener("pointerup", up); handle.addEventListener("pointercancel", up);
+  });
+  handle.addEventListener("keydown", e => {
+    const d = {ArrowLeft: 24, ArrowRight: -24, ArrowUp: -24, ArrowDown: 24}[e.key]; if (d === undefined) return; e.preventDefault();
+    const cur = axis === "x" ? $(".side").getBoundingClientRect().width : $("#list").getBoundingClientRect().height;
+    store(key, apply(cur + d) + "px");
+  });
+  handle.addEventListener("dblclick", () => { root.style.removeProperty(axis === "x" ? "--sideW" : "--listH"); store(key, ""); });
+}
+drag($("#vsplit"), "x", setSide, "sideW");
+drag($("#hsplit"), "y", setList, "listH");
+{ const w = store("sideW"), h = store("listH"); if (w) root.style.setProperty("--sideW", w); if (h) root.style.setProperty("--listH", h); }
 
 /* ---------- init ---------- */
 $("#gen").textContent = `Generated ${D.today} · checked by Jev`;
